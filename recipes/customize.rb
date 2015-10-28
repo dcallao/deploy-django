@@ -19,13 +19,13 @@ end
 firewall_rule 'http/https' do
   protocol :tcp
   port     [80, 443]
-  action   :allow
+  command  :allow
 end
 
 firewall_rule 'http/https' do
   protocol :icmp
   port     [80, 443]
-  action   :allow
+  command   :allow
 end
 
 # This customizes the TCP wrappers SSH/RDP access

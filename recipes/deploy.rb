@@ -7,21 +7,38 @@
 # All rights reserved - Do Not Redistribute
 #
 
+# Update the system
+include_recipe 'apt::default'
+
 # This deploys selinux, permissive
 include_recipe "selinux::permissive"
 
 # This deploys the dev packages
 include_recipe "build-essential"
 
+# This imports application_python
+include_recipe "poise-python"
+
+# Deploys Pg Server and configures it
+include_recipe "postgresql::server"
+
+# This is to create a pg db
+include_recipe 'database::postgresql'
+
 # Installs some OS packages
-[ "git", "python", "python-setuptools", "python-setuptools-devel" ].each do |pack|
-  package pack
+package "git"
+
+# Create a postgresql database
+postgresql_database 'django' do
+  connection(
+    :host      => '127.0.0.1',
+    :port      => 5432,
+    :username  => 'postgres',
+    :password  => node['postgresql']['password']['postgres']
+  )
+  action :create
 end
 
-# Installs pip
-execute "install-pip" do
-  command "easy_install pip"
-end
 
 # Creates the user 'django' as a dedicated user to run the sample app
 user "django" do
@@ -37,19 +54,55 @@ end
 
 # Checks out the sample app from git
 git "django_git_repo" do
-   repository "#{node['deploy-django']['sample-app']['source']['git-url']}"
-   destination "#{node['deploy-django']['sample-app']['dest']['dir']}"
-   user "django"
+  repository "#{node['deploy-django']['sample-app']['source']['git-url']}"
+  destination "#{node['deploy-django']['sample-app']['dest']['dir']}"
+  user "django"
+  notifies :run, 'execute[rename-project]', :immediately
+  notifies :run, 'execute[move-file]', :immediately
 end
 
+# Rename the 'projectname' directory
+execute 'rename-project' do
+  cwd "#{node['deploy-django']['sample-app']['dest']['dir']}"
+  command 'mv projectname djangoproject'
+  action :nothing
+end
+
+# Move requirements file
+execute 'move-file' do
+  cwd "#{node['deploy-django']['sample-app']['dest']['dir']}"
+  command 'mv requirements.txt djangoproject/requirements.txt'
+  action :nothing
+end
+
+# Adds the project name
+template "#{node['deploy-django']['sample-app']['dest']['dir']}/djangoproject/wsgi.py" do
+  source "wsgi.py.erb"
+end
+
+
 # This is a LWRP resource from application_python to deploy the sample django app
-application "#{node['deploy-django']['sample-app']['dest']['dir']}" do
+application "#{node['deploy-django']['sample-app']['dest']['dir']}/djangoproject" do
   virtualenv
   pip_requirements
   django do
-    database 'sqlite:///sample_django.db'
     allowed_hosts = ['*']
+    database({
+      engine: 'postgres',
+      user: 'postgres',
+      password: 'postgres',
+      host: 'localhost',
+      name: 'django'
+    })
+    local_settings_path "#{node['deploy-django']['sample-app']['dest']['dir']}/djangoproject/settings/default.py"
+    manage_path "#{node['deploy-django']['sample-app']['dest']['dir']}/djangoproject/manage.py"
+    secret_key "%5^p%275b2z0b4*&q-(2s0q1oj98_+^x7+l@s24101hpfw_rqb"
+    collectstatic false
     migrate true
+    
   end
 end
+
+
+
 

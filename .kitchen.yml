@@ -21,5 +21,5 @@ suites:
         - ["private_network", {ip: "192.168.17.100"}]
     run_list:
       - recipe[apt::default]
-      - recipe[deploy-django]
+      - recipe[deploy-django::default]
     attributes:

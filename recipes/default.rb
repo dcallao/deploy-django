@@ -13,13 +13,13 @@ case node['platform']
 
 when 'ubuntu', 'centos'
 
-  Chef::Log.info('Platform is a Linux distribution, initiating django sample app deployment')
+  Chef::Log.info("Platform is a Linux distribution, initiating django sample app deployment")
   include_recipe 'deploy-django::deploy'
-  include_recipe 'deploy-django:::customize'
+  include_recipe 'deploy-django::customize'
 
 else
 
-  Chef::Log.warn('Platform #{node['platform']} is not supported at this time.'
+  Chef::Log.warn("Platform #{node['platform']} is not supported at this time.")
   return
 
 end
