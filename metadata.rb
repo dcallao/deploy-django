@@ -7,7 +7,6 @@ long_description 'Installs/Configures deploy-django'
 version          '0.1.0'
 
 # Some dependencies
-depends 'rbenv'
 depends 'apt'
 depends 'build-essential'
 depends 'selinux'

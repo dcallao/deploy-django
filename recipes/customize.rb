@@ -7,9 +7,6 @@
 # All rights reserved - Do Not Redistribute
 #
 
-# This will install the xrdp package on the box 
-package 'xrdp'
-
 # This will enable platform default firewall
 firewall 'default' do
   action :install
@@ -22,24 +19,38 @@ firewall_rule 'http/https' do
   command  :allow
 end
 
-firewall_rule 'http/https' do
-  protocol :icmp
-  port     [80, 443]
-  command   :allow
+# This will customize ssh and rdp
+firewall_rule 'ssh/rdp' do
+  protocol   :tcp
+  port       [22, 3389]
+  source     '10.0.0.0/8'
+  direction  :in      
+  command    :allow
 end
 
-# This customizes the TCP wrappers SSH/RDP access
-template '/etc/hosts.allow' do
-  source 'hosts.allow.erb'
-  owner 'root'
-  group 'root'
-  mode 0644
+firewall_rule 'ssh/rdp' do
+  protocol   :tcp
+  port       [22, 3389]
+  source     '192.168.0.0/16'
+  direction  :in      
+  command    :allow
 end
 
-template '/etc/hosts.deny' do
-  source 'hosts.deny.erb'
-  owner 'root'
-  group 'root'
-  mode 0644
+firewall_rule 'ssh/rdp' do
+  protocol   :tcp
+  port       [22, 3389]
+  source     '172.0.0.0/8'
+  direction  :in      
+  command    :allow
 end
+
+# This will customize ssh and rdp
+firewall_rule 'ssh/rdp' do
+  protocol   :tcp
+  port       [22, 3389]
+  source     '0.0.0.0/0'
+  direction  :in      
+  command    :deny
+end
+
 
