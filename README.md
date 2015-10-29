@@ -32,6 +32,7 @@ The following steps will deploy this cookbook:
 `ssh-add /path/to/key.pem`
 
 2. Bootstrap and push this cookbook to your infrastructure node(s). Run the script `join-to-chef-salt.sh`
+
 `sh join-to-chef-salt.sh "${IP}" -N "${HOSTNAME}" -x "${LOGIN_USER}" -i $SSHKEY -r "$RECIPES"`
 
 Example:
