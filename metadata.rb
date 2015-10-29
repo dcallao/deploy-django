@@ -4,16 +4,15 @@ maintainer_email 'danielcallao@gmail.com'
 license          'All rights reserved'
 description      'Installs/Configures deploy-django'
 long_description 'Installs/Configures deploy-django'
-version          '0.1.0'
+version          '0.1.7'
 
 # Some dependencies
-depends 'apt'
 depends 'build-essential'
 depends 'selinux'
 depends 'application_python'
-depends 'postgresql', '~> 3.4.0'
-depends 'firewall', '~> 2.0'
-depends 'database', '~> 4.0.9'
+depends 'sqlite', '~> 1.1.2'
+depends 'firewall', '~> 2.1.0'
+
 
 
 # OS supported

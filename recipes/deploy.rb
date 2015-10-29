@@ -7,8 +7,6 @@
 # All rights reserved - Do Not Redistribute
 #
 
-# Update the system
-include_recipe 'apt::default'
 
 # This deploys selinux, permissive
 include_recipe "selinux::permissive"
@@ -19,25 +17,8 @@ include_recipe "build-essential"
 # This imports application_python
 include_recipe "poise-python"
 
-# Deploys Pg Server and configures it
-include_recipe "postgresql::server"
-
-# This is to create a pg db
-include_recipe 'database::postgresql'
-
-# Installs some OS packages
-package "git"
-
-# Create a postgresql database
-postgresql_database 'django' do
-  connection(
-    :host      => '127.0.0.1',
-    :port      => 5432,
-    :username  => 'postgres',
-    :password  => node['postgresql']['password']['postgres']
-  )
-  action :create
-end
+# Deploys sqlite
+include_recipe "sqlite"
 
 
 # Creates the user 'django' as a dedicated user to run the sample app
@@ -87,13 +68,7 @@ application "#{node['deploy-django']['sample-app']['dest']['dir']}/djangoproject
   pip_requirements
   django do
     allowed_hosts = ['*']
-    database({
-      engine: 'postgres',
-      user: 'postgres',
-      password: 'postgres',
-      host: 'localhost',
-      name: 'django'
-    })
+    database 'sqlite:///test_django.db'
     local_settings_path "#{node['deploy-django']['sample-app']['dest']['dir']}/djangoproject/settings/default.py"
     manage_path "#{node['deploy-django']['sample-app']['dest']['dir']}/djangoproject/manage.py"
     secret_key "%5^p%275b2z0b4*&q-(2s0q1oj98_+^x7+l@s24101hpfw_rqb"

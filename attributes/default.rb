@@ -4,3 +4,4 @@ default['deploy-django']['sample-app']['dest']['dir'] = '/opt/sample-django-app'
 
 # Attributes for the postgres
 default['postgresql']['password']['postgres'] = 'postgres'
+# default['postgresql']['client']['packages'] = ['postgresql', 'postgresql-devel']
