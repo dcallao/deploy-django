@@ -4,7 +4,7 @@ maintainer_email 'danielcallao@gmail.com'
 license          'All rights reserved'
 description      'Installs/Configures deploy-django'
 long_description 'Installs/Configures deploy-django'
-version          '0.1.7'
+version          '0.1.8'
 
 # Some dependencies
 depends 'build-essential'

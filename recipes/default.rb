@@ -26,7 +26,7 @@ when 'centos'
   
   Chef::Log.info("Platform is a Linux distribution, initiating django sample app deployment")
   # OS Dendencies
-  %w(git python-devel).each do |pkg|
+  %w(git postgresql postgresql-devel python-devel).each do |pkg|
     package pkg
   end
   # Recipes
